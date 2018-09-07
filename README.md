@@ -7,8 +7,9 @@ Requirements
 ------------
 
 * Repository Passwords are stored inside a keepass database, the path for the
-  Entry has to be `ansible/backups`. The name will be the repository name and
-  The password will be the repository passwords.
+  Entry has to be `ansible/backups/repos`. The name will be the specified
+  repository name, the url will be the repository URL (including protocol) and
+  the password will be the repository passwords.
 * The host running restic has to has access to the remote storage, this is
   Best done using SSH Keys.
 

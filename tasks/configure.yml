@@ -11,8 +11,8 @@
 - name: Initialize repository
   command: '{{ restic_install_path }}/restic init'
   environment:
-    RESTIC_REPOSITORY: '{{ item.url }}'
-    RESTIC_PASSWORD: '{{ item.password }}'
+    RESTIC_REPOSITORY: "{{ lookup('keepass', '/ansible/backups/repos/' + item.name + '.url') }}"
+    RESTIC_PASSWORD: "{{ lookup('keepass', '/ansible/backups/repos/' + item.name + '.password') }}"
   no_log: True
   register: restic_init
   changed_when: "'created restic backend' in restic_init.stdout"
