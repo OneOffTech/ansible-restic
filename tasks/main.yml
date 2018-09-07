@@ -1,4 +1,25 @@
 ---
+
+- name: Download public keys
+  fetch:
+    src: /root/.ssh/id_rsa.pub
+    dest: /tmp/backup-keys/{{ ansible_hostname }}.pub
+    flat: yes
+  check_mode: no # always execute this command
+
+- name: Set up SSH settings for strato
+  blockinfile:
+    path: /root/.ssh/config
+    create: yes
+    mode: 0600
+    owner: root
+    group: root
+    block: |
+      Host sftp.hidrive.strato.com
+        User {{ restic_remote_user }}
+        StrictHostKeyChecking no
+  when: restic_remote_user is defined
+
 - name: Ensure restic directories exist
   file:
     state: 'directory'

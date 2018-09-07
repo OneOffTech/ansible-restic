@@ -6,7 +6,12 @@ Deploys restic binary and cron jobs to trigger restic commands
 Requirements
 ------------
 
-None
+* Repository Passwords are stored inside a keepass database, the path for the
+  Entry has to be `ansible/backups/repos`. The name will be the specified
+  repository name, the url will be the repository URL (including protocol) and
+  the password will be the repository passwords.
+* The host running restic has to has access to the remote storage, this is
+  Best done using SSH Keys.
 
 Role Variables
 --------------
@@ -23,7 +28,6 @@ restic_jobs_raw: []
 restic_repos:
   - name: example
     url: '/backup'
-    password: 'foo'
     init: True
 ```
 
@@ -33,7 +37,7 @@ Example configuration
 ```yaml
 # format:
 # at: 'h m  dom mon dow'
-# type: < 'db_mysql' | 'db_pgsql' >
+# type: < 'db_mysql'|'db_pgsql'|'docker_db_mysql'|'docker_db_pgsql' >
 restic_jobs:
   - at: '0 6  * * *'
     type: 'db_mysql'
@@ -44,11 +48,23 @@ restic_jobs:
     tags:
       - postgres
       - database
+  - at: '0 9  * * *'
+    type: 'docker_db_mysql'
+    arg: 'wordpress'
+    container: 'wordpress_mysql_1'
+    tags:
+      - wordpress
+
 restic_jobs_raw:
   - command: 'restic backup /var'
     at: '0 4  * * *'
   - command: 'restic backup /home'
     at: '0 3  * * *'
+    user: 'restic'
+  # always keep last backup, keep daily backups for a week, weekly backups
+  # for a month, as well as six monthly backups.
+  - command: 'restic forget --keep-last 1 --keep-daily 7 --keep-weekly 4 --keep-monthly 6 --prune'
+    at: '30 22 * * 5' # every friday 22:30
     user: 'restic'
 ```
 
