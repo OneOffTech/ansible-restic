@@ -6,7 +6,11 @@ Deploys restic binary and cron jobs to trigger restic commands
 Requirements
 ------------
 
-None
+* Repository Passwords are stored inside a keepass database, the path for the
+  Entry has to be `ansible/backups`. The name will be the repository name and
+  The password will be the repository passwords.
+* The host running restic has to has access to the remote storage, this is
+  Best done using SSH Keys.
 
 Role Variables
 --------------
@@ -23,7 +27,6 @@ restic_jobs_raw: []
 restic_repos:
   - name: example
     url: '/backup'
-    password: 'foo'
     init: True
 ```
 
