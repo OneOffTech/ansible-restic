@@ -33,7 +33,7 @@ Example configuration
 ```yaml
 # format:
 # at: 'h m  dom mon dow'
-# type: < 'db_mysql' | 'db_pgsql' >
+# type: < 'db_mysql'|'db_pgsql'|'docker_db_mysql'|'docker_db_pgsql' >
 restic_jobs:
   - at: '0 6  * * *'
     type: 'db_mysql'
@@ -44,6 +44,13 @@ restic_jobs:
     tags:
       - postgres
       - database
+  - at: '0 9  * * *'
+    type: 'docker_db_mysql'
+    arg: 'wordpress'
+    container: 'wordpress_mysql_1'
+    tags:
+      - wordpress
+
 restic_jobs_raw:
   - command: 'restic backup /var'
     at: '0 4  * * *'
