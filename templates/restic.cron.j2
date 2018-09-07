@@ -39,8 +39,9 @@ OS_AUTH_TOKEN="{{ item.os_auth_token | trim }}"
   https://github.com/restic/restic/issues/21
 #}
 
-{% if restic_jobs is defined %}
-  {% for job in restic_jobs %}
+{% if item.restic_jobs is defined %}
+# jobs for backing up databases
+  {% for job in item.restic_jobs %}
     {% if job.type == 'db_mysql' %}
 {{ job.at }}  {{ job.user | default('root') }}   mysqldump --routines --add-drop-table --default-character-set=utf8 {{ job.arg }} {{ restic_stdin }} --stdin-filename {{ job.type }}_{{ job.arg }}.sql{{ hostname(job.hostname) }}{{ tags(job.tags) }}{{ redirection(job.redirection) }}
     {% elif job.type == 'db_pgsql' %}
@@ -49,8 +50,9 @@ OS_AUTH_TOKEN="{{ item.os_auth_token | trim }}"
   {% endfor %}
 {% endif %}
 
-{% if restic_jobs_raw is defined %}
-  {% for job in restic_jobs_raw %}
+{% if item.restic_jobs_raw is defined %}
+# raw jobs for backing up entire paths, or performing maintenance commands
+  {% for job in item.restic_jobs_raw %}
 {{ job.at }}  {{ job.user | default('root') }}  {{ job.command }}{{ redirection(job.redirection) }}
   {% endfor %}
 {% endif %}
